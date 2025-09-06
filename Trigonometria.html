@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego de Trigonometría</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: radial-gradient(ellipse at top left, #5eead4 0%, #6d28d9 100%);
+      margin: 0; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .container {
+      width: 95vw; max-width: 420px; min-height: 520px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(109,40,217,0.18), 0 2px 8px #5eead4;
+      padding: 36px 24px 24px 24px;
+      margin: 16px 0;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.9s cubic-bezier(.47,1.64,.41,.8);
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(40px);} to { opacity:1; transform:translateY(0);} }
+
+    h1 { text-align: center; color: #6d28d9; font-size: 2rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 10px; text-shadow: 0 2px 8px #e0e7ef; }
+    .hidden { display: none; }
+    .info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; font-size: 1.03em; background: #f3f6fb; border-radius: 12px; padding: 10px 14px; box-shadow: 0 2px 8px #e0e7ef; }
+    .timer { font-weight: 700; color: #e11d48; background: #fef2f2; border-radius: 8px; padding: 4px 12px; letter-spacing: 1px; box-shadow: 0 1px 4px #fbbf24; }
+    .score { font-weight: 700; color: #2563eb; background: #e0e7ef; border-radius: 8px; padding: 4px 12px; box-shadow: 0 1px 4px #67e8f9; }
+    .question { font-size: 1.35em; margin-bottom: 24px; color: #312e81; font-weight: 500; text-align: center; min-height: 48px; letter-spacing: -1px; transition: color 0.3s; }
+    .options { list-style: none; padding: 0; margin-bottom: 10px; }
+    .options li { margin: 14px 0; }
+    .options button { width: 100%; background: linear-gradient(90deg, #fafaf9 70%, #e0e7ef 100%); border: none; padding: 13px; border-radius: 14px; font-size: 1.08em; font-family: inherit; font-weight: 500; color: #312e81; cursor: pointer; box-shadow: 0 2px 12px #f3f6fb; transition: background 0.25s, color 0.2s, transform 0.15s; }
+    .options button:hover:not(:disabled) { background: linear-gradient(90deg, #c4b5fd 65%, #5eead4 100%); color: #fff; transform: scale(1.03); }
+    .options button:disabled { background: #f1f5f9; color: #b0b0b0; cursor: not-allowed; opacity: 0.9; }
+    .end { text-align: center; padding-top: 40px; animation: fadeIn 1.1s cubic-bezier(.53,1.44,.41,.8); }
+    .end .score { font-size: 2em; margin-bottom: 18px; color: #38bdf8; background: #fef9c3; box-shadow: 0 2px 12px #fde68a; }
+    .end .badge { background: #dbeafe; color: #6d28d9; font-weight: 700; border-radius: 8px; padding: 5px 14px; margin-bottom: 20px; font-size: 1.1em; display: inline-block; }
+    .btn { display: inline-block; background: linear-gradient(90deg,#6d28d9 60%, #38bdf8 100%); color: #fff; border: none; border-radius: 18px; padding: 12px 28px; font-size: 1.13em; font-family: inherit; font-weight: 700; cursor: pointer; margin-top: 21px; box-shadow: 0 2px 12px #c4b5fd; transition: background 0.2s, box-shadow 0.2s, transform 0.12s; }
+    .btn:hover { background: linear-gradient(90deg,#38bdf8 60%, #6d28d9 100%); box-shadow: 0 6px 16px #38bdf8; transform: scale(1.04);}
+    label { font-size: 1.13em; color: #312e81; font-weight: 500; margin-bottom: 8px; display: block; }
+    input[type="text"] { padding: 10px; font-size: 1.07em; width: 85%; border-radius: 11px; border: 2px solid #c4b5fd; margin: 12px 0 24px 0; background: #f3f6fb; color: #6d28d9; outline-color: #38bdf8; transition: border 0.2s; }
+    @media (max-width: 500px) { .container {max-width:98vw; min-height: 400px; padding: 20px 4vw;} h1 { font-size: 1.3em;} }
+    .progress { height: 8px; width: 100%; background: #f3f6fb; border-radius: 8px; overflow: hidden; margin-bottom: 22px; }
+    .progressbar { height: 100%; background: linear-gradient(90deg, #38bdf8 40%, #6d28d9 100%); width: 0; border-radius: 8px; transition: width 0.45s cubic-bezier(.53,1.44,.41,.8); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Juego de Trigonometría</h1>
+    <div id="start-screen">
+      <label for="playerName">Introduce tu nombre:</label>
+      <input id="playerName" type="text" maxlength="32" autocomplete="off" placeholder="Ejemplo: Ana">
+      <br>
+      <button class="btn" id="startBtn">Comenzar</button>
+    </div>
+    <div id="game-screen" class="hidden">
+      <div class="info">
+        <span id="playerDisplay"></span>
+        <span class="timer" id="timer">15:00</span>
+        <span class="score" id="score">Puntaje: 0</span>
+      </div>
+      <div class="progress"><div class="progressbar" id="progressbar"></div></div>
+      <div class="question" id="question"></div>
+      <ul class="options" id="options"></ul>
+    </div>
+    <div id="end-screen" class="hidden end">
+      <div class="score" id="finalScore"></div>
+      <div class="badge" id="finalPlayer"></div>
+      <button class="btn" id="restartBtn">Jugar de nuevo</button>
+    </div>
+  </div>
+<script>
+const QUESTIONS = [
+  { pregunta: "sen²θ + cos²θ =", opciones: ["1","0","sen²θ","cos²θ","2"], correcta: 0 },
+  { pregunta: "cos²θ =", opciones: ["1 - sen²θ","1 + sen²θ","sen²θ - 1","sen²θ","-sen²θ"], correcta: 0 },
+  { pregunta: "sen²θ =", opciones: ["1 - cos²θ","1 + cos²θ","cos²θ - 1","cos²θ","-cos²θ"], correcta: 0 },
+  { pregunta: "tan²θ + 1 =", opciones: ["sec²θ","csc²θ","cot²θ","1","0"], correcta: 0 },
+  { pregunta: "1 + cot²θ =", opciones: ["csc²θ","sec²θ","tan²θ","1","0"], correcta: 0 },
+  { pregunta: "cos(-θ) =", opciones: ["cosθ","-cosθ","senθ","-senθ","secθ"], correcta: 0 },
+  { pregunta: "sen(-θ) =", opciones: ["-senθ","senθ","-cosθ","cosθ","secθ"], correcta: 0 },
+  { pregunta: "sen(α + β) =", opciones: ["senα · cosβ + senβ · cosα","senα · cosβ - senβ · cosα","cosα · cosβ + senα · senβ","cosα · cosβ - senα · senβ","tanα + tanβ"], correcta: 0 },
+  { pregunta: "cos(α + β) =", opciones: ["cosα · cosβ - senα · senβ","cosα · cosβ + senα · senβ","senα · cosβ + senβ · cosα","senα · cosβ - senβ · cosα","tanα · tanβ"], correcta: 0 },
+  { pregunta: "tan(α + β) =", opciones: ["(tanα + tanβ) / (1 - tanα · tanβ)","(tanα + tanβ) / (1 + tanα · tanβ)","(tanα - tanβ) / (1 + tanα · tanβ)","(tanα - tanβ) / (1 - tanα · tanβ)","tanα · tanβ"], correcta: 0 },
+  { pregunta: "sen(2θ) =", opciones: ["2 senθ · cosθ","sen²θ - cos²θ","cos²θ - sen²θ","2 cos²θ","2 sen²θ"], correcta: 0 },
+  { pregunta: "cos(2θ) =", opciones: ["cos²θ - sen²θ","1 - 2 sen²θ","2 cos²θ - 1","Todas las anteriores","Ninguna"], correcta: 3 },
+  { pregunta: "tan(2θ) =", opciones: ["(2 tanθ) / (1 - tan²θ)","(2 tanθ) / (1 + tan²θ)","(tan²θ - 2) / (1 - tan²θ)","(2 tan²θ) / (1 - tan²θ)","tan²θ / (1 - 2 tan²θ)"], correcta: 0 },
+  { pregunta: "sen²(θ/2) =", opciones: ["(1 - cosθ)/2","(1 + cosθ)/2","(1 - senθ)/2","(1 + senθ)/2","cos²θ/2"], correcta: 0 },
+  { pregunta: "cos²(θ/2) =", opciones: ["(1 + cosθ)/2","(1 - cosθ)/2","(1 + senθ)/2","(1 - senθ)/2","sen²θ/2"], correcta: 0 },
+  { pregunta: "senα · senβ =", opciones: ["[cos(α-β) - cos(α+β)]/2","[cos(α+β) - cos(α-β)]/2","[sen(α+β) + sen(α-β)]/2","[sen(α+β) - sen(α-β)]/2","cos(α+β)"], correcta: 0 },
+  { pregunta: "cosα · cosβ =", opciones: ["[cos(α-β) + cos(α+β)]/2","[cos(α+β) - cos(α-β)]/2","[sen(α+β) + sen(α-β)]/2","[sen(α+β) - sen(α-β)]/2","sen(α+β)"], correcta: 0 },
+  { pregunta: "senα · cosβ =", opciones: ["[sen(α+β) + sen(α-β)]/2","[sen(α+β) - sen(α-β)]/2","[cos(α+β) + cos(α-β)]/2","[cos(α+β) - cos(α-β)]/2","cos(α+β)"], correcta: 0 },
+  { pregunta: "senα + senβ =", opciones: ["2 sen((α+β)/2) · cos((α-β)/2)","2 cos((α+β)/2) · sen((α-β)/2)","2 sen((α-β)/2) · cos((α+β)/2)","sen(α+β) + sen(α-β)","cos(α+β) + cos(α-β)"], correcta: 0 },
+  { pregunta: "sec²θ =", opciones: ["1 + tan²θ","1 - tan²θ","tan²θ - 1","tan²θ + 2","2 + tan²θ"], correcta: 0 },
+  { pregunta: "csc²θ =", opciones: ["1 + cot²θ","1 - cot²θ","cot²θ - 1","cot²θ + 2","2 + cot²θ"], correcta: 0 },
+  { pregunta: "sec(-θ) =", opciones: ["secθ","-secθ","cscθ","-cscθ","tanθ"], correcta: 0 },
+  { pregunta: "csc(-θ) =", opciones: ["-cscθ","cscθ","-secθ","secθ","cotθ"], correcta: 0 },
+  { pregunta: "tan(-θ) =", opciones: ["-tanθ","tanθ","-cotθ","cotθ","secθ"], correcta: 0 },
+  { pregunta: "cot(-θ) =", opciones: ["-cotθ","cotθ","-tanθ","tanθ","cscθ"], correcta: 0 }
+];
+
+let playerName = '';
+let timer = 15 * 60; // segundos
+let timerInterval = null;
+let score = 0;
+let questionsOrder = [];
+let currentQuestion = 0;
+let finished = false;
+
+const startScreen = document.getElementById('start-screen');
+const gameScreen = document.getElementById('game-screen');
+const endScreen = document.getElementById('end-screen');
+const startBtn = document.getElementById('startBtn');
+const restartBtn = document.getElementById('restartBtn');
+const playerInput = document.getElementById('playerName');
+const playerDisplay = document.getElementById('playerDisplay');
+const timerDisplay = document.getElementById('timer');
+const scoreDisplay = document.getElementById('score');
+const questionElem = document.getElementById('question');
+const optionsElem = document.getElementById('options');
+const finalScore = document.getElementById('finalScore');
+const finalPlayer = document.getElementById('finalPlayer');
+const progressbar = document.getElementById('progressbar');
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+function startGame() {
+  playerName = playerInput.value.trim();
+  if (!playerName) {
+    playerInput.classList.add('shake');
+    setTimeout(() => playerInput.classList.remove('shake'), 600);
+    playerInput.focus();
+    return;
+  }
+  timer = 15 * 60;
+  score = 0;
+  currentQuestion = 0;
+  finished = false;
+  questionsOrder = Array.from({length: QUESTIONS.length}, (_, i) => i);
+  shuffleArray(questionsOrder);
+  startScreen.classList.add('hidden');
+  endScreen.classList.add('hidden');
+  gameScreen.classList.remove('hidden');
+  playerDisplay.textContent = playerName;
+  scoreDisplay.textContent = "Puntaje: " + score;
+  showQuestion();
+  timerDisplay.textContent = formatTime(timer);
+  progressbar.style.width = "0";
+  timerInterval = setInterval(updateTimer, 1000);
+}
+function formatTime(sec) {
+  const m = Math.floor(sec / 60).toString().padStart(2, '0');
+  const s = (sec % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+function updateTimer() {
+  if (timer > 0) {
+    timer--;
+    timerDisplay.textContent = formatTime(timer);
+    if (timer === 0) endGame();
+  }
+}
+function showQuestion() {
+  if (currentQuestion >= QUESTIONS.length) {
+    endGame();
+    return;
+  }
+  finished = false;
+  const qIndex = questionsOrder[currentQuestion];
+  const q = QUESTIONS[qIndex];
+  const optionOrder = Array.from({length: q.opciones.length}, (_, i) => i);
+  shuffleArray(optionOrder);
+  questionElem.innerHTML = q.pregunta;
+  optionsElem.innerHTML = '';
+  // CORREGIDO: Usamos visualIdx como índice visual del botón
+  optionOrder.forEach((origIdx, visualIdx) => {
+    const btn = document.createElement('button');
+    btn.innerHTML = q.opciones[origIdx];
+    btn.onclick = () => selectAnswer(visualIdx, q.correcta, btn, optionOrder);
+    btn.disabled = finished;
+    const li = document.createElement('li');
+    li.appendChild(btn);
+    optionsElem.appendChild(li);
+  });
+  progressbar.style.width = ((currentQuestion) / QUESTIONS.length * 100) + "%";
+}
+
+function selectAnswer(selectedIdx, correctIdx, btn, optionOrder) {
+  if (finished) return; // evita dobles clics
+  finished = true;
+
+  // (Opcional: log de depuración)
+  /*
+  const preguntaActual = QUESTIONS[questionsOrder[currentQuestion]].pregunta;
+  const opcionesOriginales = QUESTIONS[questionsOrder[currentQuestion]].opciones;
+  console.log("Pregunta:", preguntaActual);
+  console.log("Opciones originales:", opcionesOriginales);
+  console.log("Índice correcto:", correctIdx);
+  console.log("Índice visual pulsado:", selectedIdx);
+  console.log("Índice real pulsado:", optionOrder[selectedIdx]);
+  console.log("Texto opción pulsada:", opcionesOriginales[optionOrder[selectedIdx]]);
+  console.log("Texto opción correcta:", opcionesOriginales[correctIdx]);
+  console.log("Es correcta:", optionOrder[selectedIdx] === correctIdx);
+  */
+
+  if (optionOrder[selectedIdx] === correctIdx) {
+    score += 10;
+    btn.style.background = "linear-gradient(90deg,#5eead4 60%,#38bdf8 100%)";
+    btn.style.color = "#fff";
+    btn.style.transform = "scale(1.05)";
+  } else {
+    score -= 10;
+    btn.style.background = "linear-gradient(90deg,#fecaca 60%,#e11d48 100%)";
+    btn.style.color = "#fff";
+    btn.style.transform = "scale(1.05)";
+    optionsElem.querySelectorAll('button').forEach((b, i) => {
+      if (optionOrder[i] === correctIdx) {
+        b.style.background = "linear-gradient(90deg,#a5b4fc 60%,#5eead4 100%)";
+        b.style.color = "#fff";
+        b.style.transform = "scale(1.05)";
+      }
+    });
+  }
+  scoreDisplay.textContent = "Puntaje: " + score;
+  optionsElem.querySelectorAll('button').forEach(b => b.disabled = true);
+  setTimeout(() => {
+    currentQuestion++;
+    showQuestion();
+  }, 850);
+}
+function endGame() {
+  finished = true;
+  clearInterval(timerInterval);
+  gameScreen.classList.add('hidden');
+  endScreen.classList.remove('hidden');
+  finalScore.textContent = `Marcador: ${score}`;
+  finalPlayer.textContent = `Jugador: ${playerName}`;
+}
+startBtn.onclick = startGame;
+restartBtn.onclick = () => {
+  playerInput.value = '';
+  startScreen.classList.remove('hidden');
+  gameScreen.classList.add('hidden');
+  endScreen.classList.add('hidden');
+  playerInput.focus();
+};
+playerInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') startGame();
+});
+window.onload = () => playerInput.focus();
+</script>
+</body>
+</html>
