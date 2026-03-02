@@ -1,116 +1,244 @@
-https://www3.gobiernodecanarias.org/medusa/edublog/eoiadistanciadecanarias/
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solucionario de Límites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Motor KaTeX para matemáticas nítidas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Estilos específicos para la tabla de captura */
+        .math-table td { 
+            padding: 20px 10px; 
+            border: 1px solid #cbd5e1; 
+            vertical-align: middle;
+            background: white;
+        }
+        .math-table th { 
+            background-color: #f0fdf4; /* Verde muy claro */
+            border: 1px solid #cbd5e1; 
+            padding: 12px; 
+            font-weight: 800; 
+            color: #064e3b; /* Verde oscuro */
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
 
-Marie Curie was given the Nobel Prize for Chemistry for her discovery of radium.
+        #capture-area { 
+            background: white; 
+            padding: 50px; 
+            width: 1200px; /* Un poco más ancho para que quepan las respuestas holgadamente */
+            margin: 0 auto;
+        }
 
-b Lengthy power cuts have affected homes in and around the city all this week.
+        .katex-display { margin: 0 !important; }
 
-Homes in and around the city have been affected by lengthy power cuts all this week.
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #059669; /* Esmeralda */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-200 min-h-screen p-8">
 
-c Researchers found that the ‘miracle’ drug had unpleasant side-effects.
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="text-emerald-600 font-bold">Generando solucionario en alta resolución...</div>
+    </div>
 
-The ‘miracle’ drug was found to have unpleasant side-effects.
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 flex flex-col items-center gap-4">
+            <h1 class="text-2xl font-black text-slate-800">Panel del Profesor: Solucionario</h1>
+            <button onclick="downloadImage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-xl shadow-xl transform active:scale-95 transition-all flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                DESCARGAR SOLUCIONARIO (PNG)
+            </button>
+        </div>
 
-d Scientists have found meteorites in Antarctica which they believe have come from the Moon.
+        <div id="capture-area" class="shadow-2xl">
+            <div class="text-center mb-10 border-b-4 border-emerald-600 pb-6">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tighter mb-2">SOLUCIONARIO DE LÍMITES</h2>
+                <div class="flex justify-center gap-8 text-emerald-700 font-bold text-sm">
+                    <span>ÁLGEBRA SUPERIOR</span>
+                    <span>•</span>
+                    <span>CLAVE DE RESPUESTAS</span>
+                    <span>•</span>
+                    <span>USO EXCLUSIVO DOCENTE</span>
+                </div>
+            </div>
 
-Meteorites have been found in Antarctica which are believed to have come from the Moon.
+            <table class="w-full math-table text-center border-collapse">
+                <thead>
+                    <tr>
+                        <th style="width: 5%">N°</th>
+                        <th style="width: 45%">EJERCICIO Y SOLUCIÓN</th>
+                        <th style="width: 5%" class="border-l-4 border-emerald-200">N°</th>
+                        <th style="width: 45%">EJERCICIO Y SOLUCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+            
+            <div class="mt-12 flex justify-between items-end border-t-2 border-slate-100 pt-6">
+                <div class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                    Hoja de trabajo #001 - Solucionario Oficial
+                </div>
+                <div class="text-emerald-700 font-semibold text-sm">
+                    Revisado y comprobado matemáticamente ✓
+                </div>
+            </div>
+        </div>
+    </div>
 
-e Astronomers say that there is dark matter in the universe, but they haven’t been able to detect this as yet.
+    <script>
+        // Array con los ejercicios originales y sus resultados añadidos al final de la expresión
+        const soluciones = [
+            "\\lim_{x \\to 5} 7 = 7", 
+            "\\lim_{x \\to \\infty} \\frac{3x^2 - 5x + 1}{2x^2 + 4} = \\frac{3}{2}",
+            "\\lim_{x \\to 2} 4x^3 = 32", 
+            "\\lim_{x \\to \\infty} \\frac{7x^3 + 2}{4x^3 - x^2} = \\frac{7}{4}",
+            "\\lim_{x \\to 1} (3x^2 + 5x) = 8", 
+            "\\lim_{x \\to \\infty} \\frac{5x^2 + 1}{x^3 - 2x} = 0",
+            "\\lim_{x \\to -2} (x^3 - 4x) = 0", 
+            "\\lim_{x \\to \\infty} \\frac{x^4 - 3x}{2x^2 + x} = \\infty",
+            "\\lim_{x \\to 3} (x^2(x-1)) = 18", 
+            "\\lim_{x \\to \\infty} \\frac{\\sqrt{4x^2 + 1}}{3x - 2} = \\frac{2}{3}",
+            
+            "\\lim_{x \\to 2} \\frac{x^2 + 1}{x + 2} = \\frac{5}{4}", 
+            "\\lim_{x \\to \\infty} \\frac{\\sqrt[3]{8x^3 + 5}}{2x + 1} = 1",
+            "\\lim_{x \\to 8} \\sqrt[3]{x^2} = 4", 
+            "\\lim_{x \\to \\infty} \\frac{8x^4 - 3x^2 + 1}{2x^4 + 5} = 4",
+            "\\lim_{x \\to e^2} \\ln(x) = 2", 
+            "\\lim_{x \\to \\infty} \\frac{\\sqrt{9x^2+1} + x}{3x + 2} = \\frac{4}{3}",
+            "\\lim_{x \\to 100} \\log(x^3) = 6", 
+            "\\lim_{x \\to -\\infty} \\frac{5x^3 - 2}{3x^3 + 4x} = \\frac{5}{3}",
+            "\\lim_{x \\to 3} 2^{x-1} = 4", 
+            "\\lim_{x \\to \\infty} \\frac{10x^2 - 1}{5x^2 + x} = 2",
+            
+            "\\lim_{x \\to 1} (x^2 + x + 1) = 3", 
+            "\\lim_{x \\to \\infty} (\\sqrt{x^2 + x} - x) = \\frac{1}{2}",
+            "\\lim_{x \\to 4} (\\sqrt{x} + 3x) = 14", 
+            "\\lim_{x \\to \\infty} (\\sqrt{x^2 + 4x} - \\sqrt{x^2 - 4x}) = 4",
+            "\\lim_{x \\to 0} \\frac{e^x}{x+1} = 1", 
+            "\\lim_{x \\to \\infty} (\\sqrt{x^2 + 1} - x) = 0",
+            "\\lim_{x \\to 2} \\sqrt{x+2} = 2", 
+            "\\lim_{x \\to 1} \\left[ \\frac{1}{x-1} - \\frac{2}{x^2-1} \\right] = \\frac{1}{2}",
+            "\\lim_{x \\to 1} \\frac{\\sqrt{x+3}}{x^2+1} = 1", 
+            "\\lim_{x \\to 2} \\left[ \\frac{4}{x^2-4} - \\frac{1}{x-2} \\right] = -\\frac{1}{4}",
+            
+            "\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} = 4", 
+            "\\lim_{x \\to \\infty} (\\sqrt{x^2 + 2x} - \\sqrt{x^2 - x}) = \\frac{3}{2}",
+            "\\lim_{x \\to 3} \\frac{x^2 - 9}{x^2 - 3x} = 2", 
+            "\\lim_{x \\to \\infty} \\frac{x^2 + x}{3x^2 - 5} = \\frac{1}{3}",
+            "\\lim_{x \\to -1} \\frac{x^2 + 3x + 2}{x + 1} = 1", 
+            "\\lim_{x \\to \\infty} (2x^3 - 10x^2) = -\\infty", // Corrección a infinito negativo si x->inf, o inf dependiendo del dominante (es inf pq el leading es 2x^3) -> es inf
+            "\\lim_{x \\to 1} \\frac{x^3 - 1}{x - 1} = 3", 
+            "\\lim_{x \\to \\infty} \\left(1 + \\frac{1}{x}\\right)^x = e",
+            "\\lim_{x \\to 0} \\frac{3x^3 + 2x^2}{5x^2 - 4x} = 0", 
+            "\\lim_{x \\to \\infty} \\left(1 + \\frac{3}{x}\\right)^{2x} = e^6",
+            
+            "\\lim_{x \\to 4} \\frac{\\sqrt{x} - 2}{x - 4} = \\frac{1}{4}", 
+            "\\lim_{x \\to \\infty} \\left(1 - \\frac{2}{x}\\right)^x = e^{-2}",
+            "\\lim_{x \\to 1} \\frac{\\sqrt{x+3} - 2}{x - 1} = \\frac{1}{4}", 
+            "\\lim_{x \\to 0} (1 + x)^{\\frac{1}{x}} = e",
+            "\\lim_{x \\to 5} \\frac{x^2 - 25}{x - 5} = 10", 
+            "\\lim_{x \\to \\infty} \\left(\\frac{x+2}{x+1}\\right)^x = e",
+            "\\lim_{x \\to 1} \\frac{\\sqrt{x} - 1}{\\sqrt{x+3} - 2} = 2", 
+            "\\lim_{x \\to \\infty} \\left(\\frac{2x-1}{2x+3}\\right)^{3x} = e^{-6}",
+            "\\lim_{x \\to 2} \\frac{x^3 - 8}{x - 2} = 12", 
+            "\\lim_{x \\to \\infty} \\left(\\frac{3x+5}{3x-2}\\right)^{4x} = e^{\\frac{28}{3}}"
+        ];
 
-Dark matter is said to exist in the universe, but (it) has not been detected as yet.
+        // Aseguramos que la corrección de infinito es positiva
+        soluciones[35] = "\\lim_{x \\to \\infty} (2x^3 - 10x^2) = \\infty";
 
- f Due to recent global restructuring, they will no longer manufacture the car in Europe.
+        function populateTable() {
+            const tbody = document.getElementById('table-body');
+            for (let i = 0; i < 25; i++) {
+                const tr = document.createElement('tr');
+                
+                // Izquierda
+                const td1 = document.createElement('td');
+                td1.className = "font-black text-slate-400";
+                td1.innerText = i + 1;
+                const td2 = document.createElement('td');
+                
+                // Derecha
+                const td3 = document.createElement('td');
+                td3.className = "font-black text-slate-400 border-l-4 border-emerald-200";
+                td3.innerText = i + 26;
+                const td4 = document.createElement('td');
 
-The car will no longer be manufactured in Europe, due to recent global restructuring.
+                // Renderizar usando KaTeX
+                katex.render(soluciones[i*2], td2, { displayMode: true, throwOnError: false });
+                katex.render(soluciones[i*2+1], td4, { displayMode: true, throwOnError: false });
+                
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tbody.appendChild(tr);
+            }
+        }
 
-g Mark McGurl won the Truman Capote Award for Literary Criticism in 2011.
+        window.onload = populateTable;
 
-The Truman Capote Award for Literary Criticism was won in 2011 by Mark McGurl/was won by Mark McGurl in 2011.
+        async function downloadImage() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'flex';
+            
+            await document.fonts.ready;
+            await new Promise(r => setTimeout(r, 500));
 
-h You should install the latest version of Adobe Flash to get the best from this application.
-
-The latest version of Adobe Flash should be installed to get the best from this application.
-
-
-
-
-
-
-a You mustn’t bring food and drink into the lab.
-
-Food and drink mustn't be brought into the lab.
-Food and drink must not be brought into the lab.
-
-b No photographs may be taken inside this museum.
-
-Photographs may not be taken inside this museum.
-No photographs may be taken inside this museum.
-
-c They’re using infra-red equipment to search for further survivors.
-
-Infra-red equipment is being used to search for further survivors.
-
-d Three postgraduate students will share the award for best innovation.
-
-The award for best innovation will be shared by three postgraduate students.
-The award for best innovation will be shared by/between three postgraduate students.
-
-e They are to carry out thorough safety checks immediately.
-
-Safety checks are to be carried out thorough immediately.
-Thorough safety checks are to be/will be carried out immediately.
-
-
-
-
-
-I don't like people phoning me late at night.
-
-(being)
-
-I don't like being phoned late at night.
-
-You should complete the form in black ink.
-
-(be)
-
-The form should be completed in black ink.
-
-We have not tested this product on animals.
-
-(has)
-
-This product has not been tested on animals.
-
-Having paid for the tickets, we had no choice but to continue.
-
-(been)
-
-The tickets been paid, we had no choice but to continue.
-The tickets having been paid for, we had no choice but to continue.
-
-He regrets the fact that his parents didn't send him to a better school.
-
-(having)
-
-He regrets not having been sent to a better school.
-
-You need to wash those sheets.
-
-(washing)
-
-Washing those sheets is needed.
-Those sheets need washing.
-
-It was the first palace that the Egyptians built on the east bank of the Nile.
-
-(to)
-
-It was the first palace to be built on the east bank of the Nile.
-It was the first palace to be built/have been built by the Egyptians on the east bank of the Nile.
-
-The judge ought to have sent him to prison for life.
-
-(been)
-
-He ought to have been sent to prison for life.
+            const element = document.getElementById('capture-area');
+            
+            html2canvas(element, {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                windowWidth: 1300, // Un poco más ancho para las resoluciones
+                onclone: (clonedDoc) => {
+                    clonedDoc.getElementById('capture-area').style.boxShadow = 'none';
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Solucionario_Limites_KaTeX_HD.png';
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                loading.style.display = 'none';
+            }).catch(err => {
+                console.error(err);
+                loading.style.display = 'none';
+                alert("Error al procesar la imagen.");
+            });
+        }
+    </script>
+</body>
+</html>
